@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="LaravelScotp" pattern="!file[realtimeApp]:vendor//*&amp;&amp;!file[realtimeApp]:public/*&amp;&amp;!file[realtimeApp]:storage//*" />
+</component>
