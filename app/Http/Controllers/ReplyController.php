@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ReplyResource;
 use App\Model\Question;
 use App\Model\Reply;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Symfony\Component\HttpFoundation\Response;
 
 class ReplyController extends Controller
@@ -15,11 +17,11 @@ class ReplyController extends Controller
      * Display a listing of the resource.
      *
      * @param  Question  $question
-     * @return void
+     * @return AnonymousResourceCollection
      */
     public function index(Question $question)
     {
-        return $question->replies;
+        return ReplyResource::collection($question->replies);
     }
 
 
@@ -34,7 +36,7 @@ class ReplyController extends Controller
     {
         $reply = $question->replies()->create($request->all());
 
-        return response(['reply'=> $reply], Response::HTTP_CREATED);
+        return response(['reply'=> new ReplyResource($reply)], Response::HTTP_CREATED);
     }
 
     /**
@@ -42,24 +44,26 @@ class ReplyController extends Controller
      *
      * @param  Question  $question
      * @param  Reply  $reply
-     * @return Reply
+     * @return ReplyResource
      */
     public function show(Question $question, Reply $reply)
     {
-        return $reply;
+        return new ReplyResource($reply);
     }
 
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  Reply  $reply
-     * @return \Illuminate\Http\Response
+     * @param Question $question
+     * @param \Illuminate\Http\Request $request
+     * @param Reply $reply
+     * @return Application|ResponseFactory|\Illuminate\Http\Response
      */
-    public function update(Request $request, Reply $reply)
+    public function update(Question $question, Request $request, Reply $reply)
     {
-        //
+       $reply->update($request->all());
+       return response('Updated', Response::HTTP_ACCEPTED);
     }
 
     /**
