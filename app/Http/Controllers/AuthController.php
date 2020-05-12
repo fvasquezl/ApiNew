@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 
+use App\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
@@ -14,13 +16,13 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login']]);
+        $this->middleware('JWT', ['except' => ['login','signup']]);
     }
 
     /**
      * Get a JWT via given credentials.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function login()
     {
@@ -34,9 +36,20 @@ class AuthController extends Controller
     }
 
     /**
+     * @param  Request  $request
+     * @return JsonResponse
+     */
+    public function signup(Request $request)
+    {
+        User::create($request->all());
+
+        return $this->login($request);
+    }
+
+    /**
      * Get the authenticated User.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function me()
     {
@@ -46,7 +59,7 @@ class AuthController extends Controller
     /**
      * Log the user out (Invalidate the token).
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function logout()
     {
@@ -58,7 +71,7 @@ class AuthController extends Controller
     /**
      * Refresh a token.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function refresh()
     {
@@ -70,7 +83,7 @@ class AuthController extends Controller
      *
      * @param  string $token
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     protected function respondWithToken($token)
     {
